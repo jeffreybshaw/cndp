@@ -1,0 +1,78 @@
+#!/bin/bash
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) 2022 Intel Corporation
+
+# This script is used to verify whether the headers installed by the
+# 'make install' command can be compiled for C and C++ applications.
+#
+# Some assumptions are made:
+# - CNDP is installed in the default location, usually <srcdir>/usr/local
+# - This script must be run from this script's source directory
+
+set -uo pipefail
+
+INST_DIR="../../usr/local"
+
+SCRIPT_DIR=$(realpath $(dirname ${BASH_SOURCE[0]}))
+if [[ $SCRIPT_DIR != $(pwd) ]]; then
+    echo "Error: The '${BASH_SOURCE[0]}' script must be run from '$SCRIPT_DIR'"
+    exit 1
+fi
+
+# PKG_CONFIG environment variables are used by meson
+export PKG_CONFIG_PATH=$INST_DIR/lib/pkgconfig
+
+# Test if CNDP is installed in the expected location
+if ! pkg-config libcndp --modversion > /dev/null 2>&1; then
+    echo "Error: Cannot find 'libcndp' in pkg-config path '$PKG_CONFIG_PATH'"
+    exit 1
+fi
+
+set -e
+
+# Cleanup any prior tests before running a new one
+rm -rf builddir cndp.h cnet.h net.h main.c
+
+# Find all installed headers
+find $INST_DIR/include/cndp -maxdepth 1 -type f\
+ | awk -F '/' '{print $NF}'\
+ | sort -u\
+ | xargs printf "#include <%s>\n"\
+ > cndp.h
+
+find $INST_DIR/include/cndp/cnet -maxdepth 1 -type f\
+ | awk -F '/' '{print $NF}'\
+ | sort -u\
+ | xargs printf "#include <cnet/%s>\n"\
+ > cnet.h
+
+find $INST_DIR/include/cndp/net -maxdepth 1 -type f\
+ | awk -F '/' '{print $NF}'\
+ | sort -u\
+ | xargs printf "#include <net/%s>\n"\
+ > net.h
+
+# Create a test program that includes all headers
+cat << EOF > main.c
+#include "cndp.h"
+#include "cnet.h"
+#include "net.h"
+
+int main() {
+    return 0;
+}
+EOF
+
+export PKG_CONFIG_LIBCNDP_PREFIX=../$INST_DIR
+meson builddir > /dev/null
+
+set +e
+if ! ninja -C builddir test > builddir/meson-logs/ninja-log.txt; then
+    echo "Error: ninja failed. Check builddir/meson-logs/ninja-log.txt"
+    exit 1
+fi
+
+# Cleanup when test succeeds
+rm -rf builddir cndp.h cnet.h net.h main.c
+
+echo "Success"
