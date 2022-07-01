@@ -65,7 +65,7 @@ int main() {
 EOF
 
 export PKG_CONFIG_LIBCNDP_PREFIX=../$INST_DIR
-meson builddir > /dev/null
+meson builddir
 
 set +e
 if ! ninja -C builddir test > builddir/meson-logs/ninja-log.txt; then
