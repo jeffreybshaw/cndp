@@ -37,7 +37,8 @@ jobs:
       run: make install
 
     - name: Test installed headers
-      run: cd test/installed_headers && ./run_test
+      working-directory: ./test/installed_headers
+      run: ./run_test
 
     - name: Short test
       run: meson test -C builddir --suite short
