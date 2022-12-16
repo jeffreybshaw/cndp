@@ -9,13 +9,15 @@ Integration of the CNDP app with the AF_XDP plugins for k8s
 Location of the code
 --------------------
 
-The source code for the AF_XDP plugins for k8s is located at https://github.com/intel/afxdp-plugins-for-kubernetes
+The source code for the AF_XDP plugins for k8s is located at
+https://github.com/intel/afxdp-plugins-for-kubernetes
 
 
 Build Instructions
 ------------------
 
-In order to build the plugin and deploy it, clone the repo, navigate to the top level directory and run:
+In order to build the plugin and deploy it, clone the repo, navigate to the top level directory and
+run:
 
 .. code-block:: console
 
@@ -28,8 +30,6 @@ Create the config files
 * Create the config for the device plugin
     * An example of the device plugin configuration is located at test/e2e/config.json.
     * When deploying the device plugin as a daemonset, the device plugin config is specified as a ``ConfigMap`` in the file deployments/daemonset.yaml.
-    * By default, the device plugin creates pools (group of device(s)) of the form ``cndp/i40e`` and ``cndp/E810``. If you want to use this default config, you can request this resource in the pod spec and network attachment definition.
-    * Alternately, you can create your own pools (resource types). The name of the pool should be changed to the name of your pool of devices - for example: ``pool1``
     * The device plugin can be configured to use interfaces on your system. The names of the interfaces can be specified in ``devices`` under each pool in ``pools``.
     * Instead of mentioning the interfaces, you could also specify the drivers. In this case, the device plugin discovers the devices on the system that matches the driver name specified in ``drivers`` under each pool in ``pools``.
 
@@ -37,7 +37,8 @@ Create the config files
     * An example of the network attachment definition is located at examples/network-attachment-definition.yaml
     * The name of the network attachment definition is specified as the value of ``name`` under ``metadata``.
     * The name of the resource is specified as the value of ``k8s.v1.cni.cncf.io/resourceName`` in the ``annotations`` section under ``metadata``.
-        * The resource name is of the form ``cndp/<pool_name>``. The ``cndp/`` part is from the device plugin. The ``<pool_name>`` is from the config.json. For example, ``cndp/pool1``
+        * The resource name is of the form ``afxdp/<pool_name>``. The ``afxdp/`` part is from the
+        * device plugin. The ``<pool_name>`` is from the config.json. For example, ``afxdp/myPool``
     * The ``type`` in the ``spec`` - ``config`` section is the name of the CNI.
 
 * Create the pod spec
@@ -60,12 +61,14 @@ deployments/daemonset.yaml for ``logFile``.
 
 .. code-block:: console
 
-  cat /var/log/cndp/cndp/cndp-dp.log
+  cat /var/log/afxdp-k8s-plugins/afxdp-dp.log
 
 .. note::
 
-   The network attachment definition and pod spec below request a resource named cndp/pool1. The device plugin config would need to specify a pool called pool1 with atleast one device. If not, you may run into a pod failed scheduling warning:
-   1 insufficient cndp/pool1.
+   The network attachment definition and pod spec below request a resource named afxdp/myPool. The
+   device plugin config would need to specify a pool called pool1 with atleast one device. If not,
+   you may run into a pod failed scheduling warning:
+     1 insufficient cndp/pool1.
 
 From the top level directory of the CNDP repo, create the network attachment definition
 

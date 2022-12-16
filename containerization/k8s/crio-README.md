@@ -197,32 +197,14 @@ kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-c
 
 ### Install AF_XDP Device Plugin
 
-Download the deployment file.
+Clone the repo, build the image, and deploy the daemonset.
 
 ```bash
-curl -fsSLo afxdp-daemonset.yml https://raw.githubusercontent.com/intel/afxdp-plugins-for-kubernetes/master/deployments/daemonset.yml
-```
-
-Edit the pool configuration to suit the environment.
-
-```json
-data:
-  config.json: |
-    {
-        ... snipped ...
-        "pools": [
-            {
-                "name": "pool1",
-                "drivers": ["i40e"]
-            }
-        ]
-    }
-```
-
-Deploy the device plugin.
-
-```bash
-kubectl create -f afxdp-daemonset.yml
+git clone https://github.com/intel/afxdp-plugins-for-kubernetes.git
+cd afxdp-plugins-for-kubernetes
+make image
+kubectl create -f deployments/daemonset.yml
+cd -
 ```
 
 Verify the device-plugin is running.

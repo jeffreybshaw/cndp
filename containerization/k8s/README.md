@@ -237,36 +237,6 @@ Move to the top level directory of the repo
 cd afxdp-plugins-for-kubernetes
 ```
 
-Edit the daemonset.yml
-
-```bash
-vim deployments/daemonset.yml
-```
-
-The edited daemonset.yml:
-
-```bash
-diff --git a/deployments/daemonset.yml b/deployments/daemonset.yml
-index 8465a21..774c6ca 100644
---- a/deployments/daemonset.yml
-+++ b/deployments/daemonset.yml
-@@ -6,12 +6,13 @@ metadata:
- data:
-   config.json: |
-     {
-         "mode": "cndp",
-         "logLevel": "debug",
-         "logFile": "/var/log/afxdp-k8s-plugins/cndp-dp-e2e.log",
-         "pools" : [
-             {
--                "name" : "e2e",
-+                "name" : "pool1",
-                 "drivers" : ["i40e"]
-             }
-         ]
-
-```
-
 The device plugin can be either deployed as a daemonset or launched from the
 command line. In order to deploy the device plugin as a daemonset:
 
@@ -274,7 +244,7 @@ command line. In order to deploy the device plugin as a daemonset:
 sudo make deploy
 ```
 
-The above command also builds the CNDP device plugin docker image.
+The above command also builds the device plugin docker image.
 
 ### Import docker images
 
