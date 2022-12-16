@@ -1,16 +1,16 @@
 apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition
 metadata:
-  name: cndp-cni-afxdp0
+  name: afxdp-network
   annotations:
-    k8s.v1.cni.cncf.io/resourceName: cndp/pool1
+    k8s.v1.cni.cncf.io/resourceName: afxdp/myPool
 spec:
   config: '{
       "cniVersion": "0.3.0",
       "type": "afxdp",
-      "mode": "cndp",
+      "mode": "primary",
       "queues": "1",
-      "logFile": "/var/log/afxdp-k8s-plugins/cndp-cni.log",
+      "logFile": "afxdp-cni.log",
       "logLevel": "debug",
       "ipam": {
         "type": "host-local",

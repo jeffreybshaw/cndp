@@ -5,17 +5,17 @@
 
 # Bash script to generate jsonc file to be used with cndpfwd app
 # This script is dependent on these environment variables being set:
-# CNDP_DEVICES and LIST_OF_QIDS
-# CNDP_DEVICES is the list of interfaces that are passed into the cndpfwd app
+# AFXDP_DEVICES and LIST_OF_QIDS
+# AFXDP_DEVICES is the list of interfaces that are passed into the cndpfwd app
 # When this script is used as part of a K8s deployment, the K8s device plugin
-# would populate the CNDP_DEVICES environment variable.
+# would populate the AFXDP_DEVICES environment variable.
 # LIST_OF_QIDS is the list of queue IDs that are used to program ethtool filters.
 # The available cores to the application are determined by
 # the 'lscpu' command.
 
 config_file=config.jsonc
 
-CNDP_DEVICES=${CNDP_DEVICES:-net1}
+CNDP_DEVICES=${AFXDP_DEVICES:-net1}
 CNDP_COPY_MODE=${CNDP_COPY_MODE:-false}
 LIST_OF_QIDS=${LIST_OF_QIDS:-4}
 
@@ -247,7 +247,7 @@ cat <<-EOF > ${config_file}
         "no-metrics": false,
         "no-restapi": false,
         "cli": false,
-        "uds_path": "/tmp/cndp.sock",
+        "uds_path": "/tmp/afxdp.sock",
         "mode": "drop"
     },
 
